@@ -1,4 +1,5 @@
 asyncapi: '2.0.0'
+id: 'urn:smartec:gateway:luminaria-control'
 info:
   title: Comando On/Off para Dispositivo
   version: '1.0.0'
@@ -6,34 +7,38 @@ info:
     Especificación AsyncAPI para el envío de comandos (on, off, dimming, rgb_on, rgb_off)
     a dispositivos vía MQTT. Este ejemplo modela la lógica de un handler que envía el
     comando recibido al dispositivo identificado.
+  contact:
+    name: Soporte Técnico
+    url: https://ejemplo.com/soporte
+    email: soporte@ejemplo.com
+  license:
+    name: Propietario
+tags:
+  - name: luminaria
+    description: Operaciones relacionadas con el control de luminarias
 servers:
   production:
     url: mqtt://broker.ejemplo.com
     protocol: mqtt
+defaultContentType: application/json
 channels:
-  LuminariaControlPayload:
+  device/luminaria/control:
+    description: Canal para enviar comandos de control a una luminaria.
+    publish:
+      summary: Publica comandos para controlar una luminaria (encender, apagar, dimming).
+      operationId: sendLuminariaCommand
+      message:
+        payload:
+          $ref: '#/components/schemas/LuminariaControlPayload'
+components:
+  schemas:
+    LuminariaControlPayload:
       type: array
-      on/Off:
-        - description: Comando para encender o apagar luminaria
-          type: array
-          items:
-            type: integer
-          minItems: 3
-          maxItems: 3
-          example: [0, 0, 1]
-        - description: Comando para ajustar dimming
-          type: array
-          items:
-            type: integer
-          minItems: 4
-          maxItems: 4
-          example: [0, 0, 3, 75]
-      discriminator:
-        propertyName: "2"
-        mapping:
-          "1": "#/components/schemas/LuminariaEncender"
-          "2": "#/components/schemas/LuminariaApagar"
-          "3": "#/components/schemas/LuminariaDimming"
+      oneOf:
+        - $ref: '#/components/schemas/LuminariaEncender'
+        - $ref: '#/components/schemas/LuminariaApagar' 
+        - $ref: '#/components/schemas/LuminariaDimming'
+      discriminator: "2"
 
     LuminariaEncender:
       type: array

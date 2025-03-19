@@ -1,64 +1,107 @@
 
     const schema = {
   "asyncapi": "2.0.0",
+  "id": "urn:smartec:gateway:luminaria-control",
   "info": {
     "title": "Comando On/Off para Dispositivo",
     "version": "1.0.0",
-    "description": "Especificación AsyncAPI para el envío de comandos (on, off, dimming, rgb_on, rgb_off)\na dispositivos vía MQTT. Este ejemplo modela la lógica de un handler que envía el\ncomando recibido al dispositivo identificado.\n"
+    "description": "Especificación AsyncAPI para el envío de comandos (on, off, dimming, rgb_on, rgb_off)\na dispositivos vía MQTT. Este ejemplo modela la lógica de un handler que envía el\ncomando recibido al dispositivo identificado.\n",
+    "contact": {
+      "name": "Soporte Técnico",
+      "url": "https://ejemplo.com/soporte",
+      "email": "soporte@ejemplo.com"
+    },
+    "license": {
+      "name": "Propietario"
+    }
   },
+  "tags": [
+    {
+      "name": "luminaria",
+      "description": "Operaciones relacionadas con el control de luminarias"
+    }
+  ],
   "servers": {
     "production": {
       "url": "mqtt://broker.ejemplo.com",
       "protocol": "mqtt"
     }
   },
+  "defaultContentType": "application/json",
   "channels": {
-    "device/onoff": {
-      "description": "Canal para enviar comandos a un dispositivo.",
+    "device/luminaria/control": {
+      "description": "Canal para enviar comandos de control a una luminaria.",
       "publish": {
-        "summary": "Publica un comando para cambiar el estado de un dispositivo.",
-        "operationId": "sendOnOffCommand",
+        "summary": "Publica comandos para controlar una luminaria (encender, apagar, dimming).",
+        "operationId": "sendLuminariaCommand",
         "message": {
-          "contentType": "application/json",
           "payload": {
-            "type": "object",
-            "properties": {
-              "node_id": {
-                "type": "string",
-                "description": "Identificador único del dispositivo.",
-                "example": "12345",
-                "x-parser-schema-id": "<anonymous-schema-2>"
-              },
-              "command": {
-                "type": "string",
-                "description": "Comando a ejecutar en el dispositivo.",
-                "enum": [
-                  "on",
-                  "off",
-                  "dimming",
-                  "rgb_on",
-                  "rgb_off"
+            "type": "array",
+            "oneOf": [
+              {
+                "type": "array",
+                "description": "Comando para encender luminaria",
+                "items": {
+                  "type": "integer",
+                  "x-parser-schema-id": "<anonymous-schema-1>"
+                },
+                "minItems": 3,
+                "maxItems": 3,
+                "example": [
+                  0,
+                  0,
+                  1
                 ],
-                "example": "on",
-                "x-parser-schema-id": "<anonymous-schema-3>"
+                "x-parser-schema-id": "LuminariaEncender"
               },
-              "payload_bytes": {
-                "type": "string",
-                "description": "Representación en cadena hexadecimal de los datos.",
-                "example": "0A0B0C0D",
-                "x-parser-schema-id": "<anonymous-schema-4>"
+              {
+                "type": "array",
+                "description": "Comando para apagar luminaria",
+                "items": {
+                  "type": "integer",
+                  "x-parser-schema-id": "<anonymous-schema-2>"
+                },
+                "minItems": 3,
+                "maxItems": 3,
+                "example": [
+                  0,
+                  0,
+                  2
+                ],
+                "x-parser-schema-id": "LuminariaApagar"
+              },
+              {
+                "type": "array",
+                "description": "Comando para ajustar dimming",
+                "items": {
+                  "type": "integer",
+                  "x-parser-schema-id": "<anonymous-schema-3>"
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "example": [
+                  0,
+                  0,
+                  3,
+                  75
+                ],
+                "x-parser-schema-id": "LuminariaDimming"
               }
-            },
-            "required": [
-              "node_id",
-              "command",
-              "payload_bytes"
             ],
-            "x-parser-schema-id": "<anonymous-schema-1>"
+            "discriminator": "2",
+            "x-parser-schema-id": "LuminariaControlPayload"
           },
           "x-parser-message-name": "<anonymous-message-1>"
         }
       }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LuminariaControlPayload": "$ref:$.channels.device/luminaria/control.publish.message.payload",
+      "LuminariaEncender": "$ref:$.channels.device/luminaria/control.publish.message.payload.oneOf[0]",
+      "LuminariaApagar": "$ref:$.channels.device/luminaria/control.publish.message.payload.oneOf[1]",
+      "LuminariaDimming": "$ref:$.channels.device/luminaria/control.publish.message.payload.oneOf[2]"
     }
   },
   "x-parser-spec-parsed": true,
