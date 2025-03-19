@@ -36,8 +36,6 @@
         "operationId": "sendLuminariaCommand",
         "message": {
           "payload": {
-            "description": "Payload para el control de luminarias",
-            "type": "array",
             "oneOf": [
               {
                 "type": "array",
@@ -57,7 +55,7 @@
               },
               {
                 "type": "array",
-                "description": "Comando para apagar luminaria",
+                "description": "Comando para apagar luminaria.",
                 "items": {
                   "type": "integer",
                   "x-parser-schema-id": "<anonymous-schema-2>"
@@ -73,7 +71,7 @@
               },
               {
                 "type": "array",
-                "description": "Comando para ajustar dimming",
+                "description": "Comando para ajustar dimming.",
                 "items": {
                   "type": "integer",
                   "x-parser-schema-id": "<anonymous-schema-3>"
@@ -89,7 +87,33 @@
                 "x-parser-schema-id": "LuminariaDimming"
               }
             ],
-            "discriminator": "2",
+            "x-examples": {
+              "encender": {
+                "summary": "Encender luminaria",
+                "value": [
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "apagar": {
+                "summary": "Apagar luminaria",
+                "value": [
+                  0,
+                  0,
+                  2
+                ]
+              },
+              "dimming": {
+                "summary": "Ajustar dimming",
+                "value": [
+                  0,
+                  0,
+                  3,
+                  75
+                ]
+              }
+            },
             "x-parser-schema-id": "LuminariaControlPayload"
           },
           "x-parser-message-name": "<anonymous-message-1>"
