@@ -36,11 +36,12 @@
         "operationId": "sendLuminariaCommand",
         "message": {
           "payload": {
+            "description": "Payload para el control de luminarias",
             "type": "array",
             "oneOf": [
               {
                 "type": "array",
-                "description": "Comando para encender luminaria",
+                "description": "Comando para encender luminaria.\nEjemplos:\n- [0, 0, 1] (Encender luminaria 0)\n- [1, 0, 1] (Encender luminaria 1)\n",
                 "items": {
                   "type": "integer",
                   "x-parser-schema-id": "<anonymous-schema-1>"

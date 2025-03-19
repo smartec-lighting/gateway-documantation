@@ -33,6 +33,7 @@ channels:
 components:
   schemas:
     LuminariaControlPayload:
+      description: Payload para el control de luminarias
       type: array
       oneOf:
         - $ref: '#/components/schemas/LuminariaEncender'
@@ -42,7 +43,11 @@ components:
 
     LuminariaEncender:
       type: array
-      description: Comando para encender luminaria
+      description: |
+        Comando para encender luminaria.
+        Ejemplos:
+        - [0, 0, 1] (Encender luminaria 0)
+        - [1, 0, 1] (Encender luminaria 1)
       items:
         type: integer
       minItems: 3
