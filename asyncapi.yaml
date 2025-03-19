@@ -11,30 +11,53 @@ servers:
     url: mqtt://broker.ejemplo.com
     protocol: mqtt
 channels:
-  device/onoff:
-    description: Canal para enviar comandos a un dispositivo.
-    publish:
-      summary: Publica un comando para cambiar el estado de un dispositivo.
-      operationId: sendOnOffCommand
-      message:
-        contentType: application/json
-        payload:
-          type: object
-          properties:
-            node_id:
-              type: string
-              description: Identificador único del dispositivo.
-              example: "12345"
-            command:
-              type: string
-              description: Comando a ejecutar en el dispositivo.
-              enum: [ "on", "off", "dimming", "rgb_on", "rgb_off" ]
-              example: "on"
-            payload_bytes:
-              type: string
-              description: Representación en cadena hexadecimal de los datos.
-              example: "0A0B0C0D"
-          required:
-            - node_id
-            - command
-            - payload_bytes
+  LuminariaControlPayload:
+      type: array
+      on/Off:
+        - description: Comando para encender o apagar luminaria
+          type: array
+          items:
+            type: integer
+          minItems: 3
+          maxItems: 3
+          example: [0, 0, 1]
+        - description: Comando para ajustar dimming
+          type: array
+          items:
+            type: integer
+          minItems: 4
+          maxItems: 4
+          example: [0, 0, 3, 75]
+      discriminator:
+        propertyName: "2"
+        mapping:
+          "1": "#/components/schemas/LuminariaEncender"
+          "2": "#/components/schemas/LuminariaApagar"
+          "3": "#/components/schemas/LuminariaDimming"
+
+    LuminariaEncender:
+      type: array
+      description: Comando para encender luminaria
+      items:
+        type: integer
+      minItems: 3
+      maxItems: 3
+      example: [0, 0, 1]
+
+    LuminariaApagar:
+      type: array
+      description: Comando para apagar luminaria
+      items:
+        type: integer
+      minItems: 3
+      maxItems: 3
+      example: [0, 0, 2]
+
+    LuminariaDimming:
+      type: array
+      description: Comando para ajustar dimming
+      items:
+        type: integer
+      minItems: 4
+      maxItems: 4
+      example: [0, 0, 3, 75]
